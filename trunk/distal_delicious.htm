@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<html>
+<title>Distal demo - Loading JSON from Delicious bookmarks</title>
+<style type="text/css">
+table, td, th {border:1px solid #ddd; border-collapse:collapse}
+p {margin:2em 1em}
+table a {text-decoration:none}
+table a:hover {text-decoration:underline}
+</style>
+<script src="distal.js"></script>
+<script>
+var data = {deli:{}};
+var once = false;
+
+function getJSON(s) {
+  if(once) return;
+  once = true;
+  document.getElementById("download").innerHTML = "Loading...";
+  document.body.appendChild(document.createElement("script")).src = s;
+}
+
+function callback(j) {
+  data.deli = j;
+  document.getElementById("download").style.display = "none";
+  document.getElementById("distal").style.display = "";
+  document.getElementById("from_server").value = explore(j);
+}
+
+function explore(o, pad) {
+  pad = pad || "";
+  if(typeof o == "string") return '"' + o.replace('"', '\\"') + '"';
+  else if(typeof o == "number") return o;
+  else if(typeof o == "boolean") return o ? "true" : "false";
+  else if(o instanceof Array) {
+    var str = [];
+    for(var i=0; i<o.length; i++) str.push("\n  " + pad + explore(o[i], pad + "  "));
+    return "[" + str.join(",") + "\n" + pad + "]";
+  } else {
+    var str = [];
+    for(var i in o) str.push("\n  " + pad + '"' + i + '": ' + explore(o[i], pad + "  "));
+    return "{" + str.join(",") + "\n" + pad + "}";
+  }
+}
+</script>
+<body onload="document.getElementById('from_html').value='<table>'+document.getElementsByTagName('table')[1].innerHTML+'\n<\/table>';">
+<p>
+  <a href="javascript:getJSON('http://feeds.delicious.com/v2/json/tag/javascript?callback=callback&count=20');" id="download">Download JSON bookmarks from feeds.delicious.com</a>
+</p>
+
+<table width="100%" cellspacing=0 style="border:0">
+  <tr>
+    <td style="border:0" width="50%"><textarea id="from_server" style="width:90%; height:15em" spellcheck="false" readonly="readonly">{click download}</textarea></td>
+    <td style="border:0" width="50%"><textarea id="from_html" style="width:90%; height:15em" spellcheck="false" readonly="readonly">&lt;html&gt;</textarea></td>
+  </tr>
+</table>
+
+<p>
+  <a href="javascript:distal(document.body,data);" id="distal" style="display:none"><b>Run Distal</b></a>
+</p>
+
+<table style="width:80%" cellpadding=3>
+  <tr>
+    <th></th><th>Author</th><th>Title</th><th>Tags</th>
+  </tr>
+  <tr data-qrepeat="item deli">
+    <td data-qtext="#"></td>
+    <td data-qtext="item.a" data-qattr="title item.dt">john doe</td>
+    <td><a href="#" data-qattr="href item.u" data-qtext="item.d">Lorem ipsum dolor sit amet</td>
+    <td><select><option data-qrepeat="tag item.t" data-qattr="text tag">tags</select></td>
+  </tr>
+</table>
+
+<p style="color:#888">Click on Download to download JSON data from the Delicious.com website.
+<br>Then click Run to Distal the JSON on to this page.
+<br><br><a href="http://code.google.com/p/distal">&laquo; Back</a></p>
+<script>
+distal.beforeText = function(node, attr) {
+  if(/java/i.test(attr)) node.style.fontWeight = "bold";
+};
+</script>
+</body>
+</html>

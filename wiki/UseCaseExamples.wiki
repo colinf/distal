@@ -1,0 +1,104 @@
+#summary Use Cases for Distal
+#labels Featured
+Below are a number of use case examples to demonstrate how to use Distal. For more information, check out the [http://code.google.com/p/distal/w/list wiki page]:
+
+<wiki:toc  />
+
+=== Updating a section of your page with sports scores ===
+<code language="xml">
+<html> 
+<table id="scoreboard"> 
+  <tr><th>Team</th><th>Team</th></tr> 
+  <tr data-qrepeat="m scores"> 
+    <td><span data-qtext="m.ateam.name"></span> - <span data-qtext="m.ateam.score"></span></td> 
+    <td><span data-qtext="m.bteam.name"></span> - <span data-qtext="m.bteam.score"></span></td> 
+  </tr> 
+</table> 
+</html></code>
+<code language="javascript">
+distal(document.getElementById("scoreboard"), {scores: [
+    {ateam: {name: "JFK", score: 4}, bteam: {name: "LAX", score: 2}},
+    {ateam: {name: "LHR", score: 0}, bteam: {name: "SGN", score: 1}},
+    {ateam: {name: "NRT", score: 1}, bteam: {name: "HKG", score: 2}},
+    {ateam: {name: "BOM", score: 3}, bteam: {name: "IGU", score: 5}}
+]}); </code>
+----
+===Updating toolbar button States===
+<code language="xml"><html> 
+<div id="toolbar"> 
+  <input type="button" value="Copy" data-qattr="disabled nocopy"> 
+  <input type="button" value="Paste" data-qattr="disabled nopaste"> 
+  <input type="button" value="Bold" data-qattr="class bold"> 
+  <input type="button" value="Italic" data-qattr="class italic"> 
+</div> 
+</html></code>
+<code language="javascript">
+distal(document.getElementById("toolbar"), {
+    nocopy: true, nopaste: false, bold: "b", italic: "i"
+}); </code>
+----
+===Flipping through content===
+<code language="xml"><html> 
+<div data-qif="page1"> 
+  Welcome! Click "Next" to start. 
+</div> 
+<div data-qif="page2"> 
+  Your generated password is: <span data-qtext="page2.pwd"> </span> 
+</div> 
+</html></code>
+<code language="javascript">
+distal(document.body, { 
+    page1: null, 
+    page2: { 
+        pwd: "swordfish"
+    }
+}); </code>
+----
+===Building a nested tree===
+<code language="xml"><ul> 
+    <li data-qrepeat="H1 list"> 
+        <div data-qtext="H1.value">Top Level</div> 
+        <ul data-qif="H1.list"> 
+            <li data-qrepeat="H2 H1.list"> 
+                <div data-qtext="H2.value">2nd Level</div> 
+                <ul data-qif="H2.list"> 
+                    <li data-qrepeat="H3 H2.list"> 
+                        <div data-qtext="H3.value">3rd Level</div> 
+                    </li> 
+                </ul> 
+            </li> 
+        </ul> 
+    </li> 
+</ul></code>
+<code language="javascript">
+var data = { 
+  list: [ 
+      {value:"Introduction", list:[ 
+          {value:"History", list:[ 
+              {value:"Early 70s"}, 
+              {value:"Mid 80s"} 
+          ]}, 
+          {value:"Overview", list:[ 
+              {value:"The Great Step"} 
+          ]}, 
+          {value:"Ethos"} 
+      ]}, 
+      {value:"Breaking Ground", list:[ 
+          {value:"Identifying Needs"}, 
+          {value:"Delegation"} 
+      ]},  
+      {value:"Improvements", list:[ 
+          {value:"New Faculties", list:[ 
+              {value:"Contemporary"}, 
+              {value:"Alternative"} 
+          ]}, 
+          {value:"New Age"} 
+      ]}, 
+      {value: "Justification"}, 
+      {value: "Closing Statement"} 
+  ] 
+};
+distal(document.body, data);
+</code>
+----
+If you have questions, please put them on the [http://code.google.com/p/distal/issues/list Issues] page instead of the comments area.

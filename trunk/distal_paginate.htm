@@ -1,0 +1,74 @@
+<html>
+<head><title>Pagination Demo with Distal and Digg</title></head>
+<body>
+<script src="distal.js"></script>
+<script>
+// ArrayPaginator from: http://code.google.com/p/distal/wiki/PaginationTool
+function ArrayPaginator(arr) {
+  this.source = arr;
+}
+ArrayPaginator.prototype = {
+  currentPageNumber: 1,
+  currentPageSize: 0,
+  pageSize: 20,
+  pageCount: 0,
+  pages: null,
+  isLastPage: false,
+
+  update: function() {
+    this.pageCount = Math.ceil(this.source.length / this.pageSize);
+    if(this.currentPageNumber < 1 || this.currentPageNumber*this.pageSize > this.source.length) {
+      this.currentPageNumber = this.pageCount;
+    }
+    this.remaining = this.source.length < this.pageSize ? 0 :
+      Math.max(0, this.source.length - this.currentPageNumber*this.pageSize);
+    this.currentPageSize = this.remaining > 0 ? this.pageSize :
+      this.source.length % this.pageSize;
+    var curPageIndex = this.currentPageNumber - 1;
+    this.pages = this.source.slice(
+      curPageIndex*this.pageSize,
+      this.currentPageSize + curPageIndex*this.pageSize
+    );
+    this.isLastPage = (this.currentPageNumber == this.pageCount);
+  }
+};
+
+var data = null;
+
+function cb(json) {
+  data = new ArrayPaginator(json.diggs);
+  data.pageSize = 15;
+  update();
+}
+
+function update() {
+  if(data) {
+    data.update();
+    distal(document.body, {list:data});
+  }
+}
+</script>
+<body>
+<h1>Pagination Demo with Distal and Digg</h1>
+
+<div>
+  <a href="javascript:data.currentPageNumber--;update();" data-qif="list.currentPageNumber ne 1">&lt; Previous</a>
+
+  Page <span data-qtext="list.currentPageNumber">1</span> of <span data-qtext="list.pageCount">1</span>
+  (<span data-qtext="list.currentPageSize">0</span> items in <span data-qtext="list.source.length">0</span>)
+
+  <a href="javascript:data.currentPageNumber++;update();" data-qif="not:list.isLastPage">Next &gt;</a>
+</div>
+
+<ul type="square">
+  <li data-qrepeat="m list.pages">
+    <img data-qattr="src m.item.thumbnail.src" height=16 style="vertical-align:middle">
+    <a data-qtext="m.item.title" data-qattr="href m.item.link">Please wait, loading items from Digg...</a>
+  </li>
+</ul>
+
+<script src="http://services.digg.com/2.0/digg.getAll?topic=technology&count=60&type=javascript&callback=cb"></script>
+
+<br><br><a href="http://code.google.com/p/distal">&laquo; Back</a></p>
+</body>
+</html>
