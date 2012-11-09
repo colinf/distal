@@ -1,4 +1,4 @@
 /**
  * Exporting distal.
  */
-module.exports = require("./svn/distal-dev.js");
+module.exports = require("./svn/trunk/distal-dev.js");

@@ -1,5 +1,5 @@
 
-build: components index.js
+build: components index.js svn/trunk/distal-dev.js
 	@component build --dev
 
 components: component.json

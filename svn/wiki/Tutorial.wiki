@@ -1,0 +1,115 @@
+#summary Tutorial on how to use Distal
+#labels Featured
+
+=Ingredients:=
+To use [http://code.google.com/p/distal Distal] you will need:
+  # a webpage, like `index.html`
+  # a copy of `distal.js`
+
+=Step 1:=
+Design you webpage however you want the end user to see it. You may use WYSIWYG tools like Dreamweaver, as no Javascript is required. 
+For example:
+<code language="xml">
+<html> 
+  <head> 
+    <title>Larry's Tool Shed</title> 
+    <script src="distal.js"></script> 
+  </head> 
+  <body> 
+    <h1>Larry's Tool Shed</h1> 
+ 
+    <div>Welcome back, <a href="profile.html">Bob</a>!</div> 
+ 
+    <div>What kinda tools would ya like to rent today?</div> 
+ 
+    <ol> 
+      <li><a href="screwdrivers.html">Screw drivers</a> 
+      <li><a href="lugnuts.html">Lug Nuts</a> 
+      <li><a href="spanner.html">Spanner</a> 
+    </ol> 
+ 
+    <div>Hey, Bob, don't forget to pay your bills on time!</div> 
+    <table> 
+      <tr> 
+        <th>Tool</th><th>Days Rented</th><th>Amount Due</th> 
+      </tr> 
+      <tr> 
+        <td>Spanner</td><td>3</td><td>$45</td> 
+      </tr> 
+      <tr> 
+        <th>Total:</th><th>3</th><th>$45</th> 
+      </tr> 
+    </table> 
+ 
+  </body> 
+</html></code>
+
+=Step 2:=
+Make your state-of-the-art Javascript application pull in data from your state-of-the-art backend server. Ideally you have that already or your enterprise already has one and you are tasked with interfacing with it. By now you should have some data in some Javascript variable that you want to update the user interface with. For example you may have this:
+<code language="json">
+var statistics = { 
+    user: {name: "Bob", profile_url: "/profile?id=12345"}, 
+    tools: { 
+        {name: "Spanner", rent_url: "rent?id=2"}, 
+        {name: "Lug Nuts", rent_url: "rent?id=4"}, 
+        {name: "Screw drivers", rent_url: "rent?id=6"} 
+    }, 
+    rented: { 
+        items: [{name: "Spanner", cost: 45, days: 3}], 
+        total_days: 3, 
+        total_cost: 45
+    } 
+};</code>
+
+=Step 3:=
+Go back to your HTML and add distal attributes to all the elements which contain data that you want to modify. You HTML should now look like this:
+
+
+
+<code language="xml">
+<html> 
+  <head> 
+    <title>Larry's Tool Shed</title> 
+    <script src="distal.js"></script> 
+    <script src="stateoftheart.js"></script> 
+  </head> 
+  <body> 
+    <h1>Larry's Tool Shed</h1> 
+ 
+    <div>Welcome back, <a href="profile.html" data-qattr="href user.profile_url" data-qtext="user.name">Bob</a>!</div> 
+ 
+    <div>What kinda tools would ya like to rent today?</div> 
+ 
+    <ol> 
+      <li data-qif="not:tools">Sorry, you're not eligible to rent tools!</li> 
+      <li data-qrepeat="item tools"> 
+        <a href="screwdrivers.html" data-qtext="item.name" data-qattr="item.rent_url">Screw drivers</a> 
+      <li data-qdup="1"><a href="lugnuts.html">Lug Nuts</a> 
+      <li data-qdup="1"><a href="spanner.html">Spanner</a> 
+    </ol> 
+ 
+    <div data-qif="rented">Hey, <span data-qtext="user.name">Bob</span>, don't forget to pay your bills on time!</div> 
+    <table data-qif="rented"> 
+      <tr> 
+        <th>Tool</th><th>Days Rented</th><th>Amount Due</th> 
+      </tr> 
+      <tr data-qrepeat="item rented.items"> 
+        <td data-qtext="item.name">Spanner</td><td data-qtext="item.days">3</td><td data-qtext="item.cost">$45</td> 
+      </tr> 
+      <tr> 
+        <th>Total:</th><th data-qtext="rented.total_days">3</th><th data-qtext="rented.total_cost">$45</th> 
+      </tr> 
+    </table> 
+ 
+  </body> 
+</html></code>
+
+=Step 4:=
+Inside your state-of-the-art application, whenever you want to update the page, just call:
+<code language="javascript">
+StateOfTheArtApp.onDataModelChange = function(statistics) { 
+ 
+  //update the view 
+  distal(document.body, statistics); 
+ 
+}; </code>

@@ -9,6 +9,6 @@
   "license": "MIT",
   "scripts": [
     "index.js",
-    "svn/distal-dev.js"
+    "svn/trunk/distal-dev.js"
   ]
 }
