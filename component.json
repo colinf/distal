@@ -1,0 +1,14 @@
+{
+  "name": "distal",
+  "repo": "colinf/distal",
+  "description": "Javascript templates inspired by Zope TAL",
+  "version": "0.0.1",
+  "keywords": [],
+  "dependencies": {},
+  "development": {},
+  "license": "MIT",
+  "scripts": [
+    "index.js",
+    "svn/distal-dev.js"
+  ]
+}
